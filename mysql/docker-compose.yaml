@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: eladmin-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: eladmin
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - eladmin-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: eladmin-phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - eladmin-network
+
+  redis:
+    image: redis:latest
+    container_name: eladmin-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - eladmin-network
+
+networks:
+  eladmin-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  redis_data:
